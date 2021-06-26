@@ -1,4 +1,5 @@
 const express = require('express');
+
 const promotion = require('../models/promotion');
 
 const promotionRouter = express.Router();
@@ -51,6 +52,7 @@ promotionRouter.route('/:promotionId')
     res.statusCode = 403;
     res.end(`POST operation not supported on /promotions/${req.params.promotionId}`);
   })
+
   .put((req, res, next) => {
     promotion.findByIdAndUpdate(req.params.promotionId, {
       $set: req.body
