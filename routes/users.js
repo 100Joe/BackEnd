@@ -2,12 +2,25 @@ const express = require('express');
 const User = require('../models/user');
 const passport = require('passport');
 const authenticate = require('../authenticate');
+const user = require('../models/user');
 
 const router = express.Router();
 
 /* GET users listing. */
-router.get('/', function (req, res) {
-  res.send('respond with a resource');
+router.get('/', authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+  if (req.user.admin) {
+    user.find()
+      .then(users => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(users);
+      })
+      .catch(err => next(err));
+  } else {
+    err = new Error('You are not authorized to perform this operation!');
+    err.status = 403;
+    return next(err);
+  }
 });
 
 router.post('/signup', (req, res) => {
